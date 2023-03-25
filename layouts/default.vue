@@ -1,0 +1,92 @@
+<template>
+  <v-app>
+    <v-navigation-drawer v-model="drawer" rail expand-on-hover>
+      <v-list>
+        <v-list-item
+          v-for="(item, i) in items"
+          :key="i"
+          :to="item.to"
+          :title="item.title"
+          :prepend-icon="item.icon"
+          exact
+        >
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+    <v-app-bar>
+      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-toolbar-title>{{title}}</v-toolbar-title>
+      <v-spacer />
+      <v-btn v-if="logged" icon @click.stop="doLogout()">
+        <v-icon>mdi-logout</v-icon>
+      </v-btn>
+      <v-btn v-else icon to="/login">
+        <v-icon>mdi-login</v-icon>
+      </v-btn>
+    </v-app-bar>
+
+    <v-main>
+        <v-container>
+        <slot />
+      </v-container>
+    </v-main>
+  </v-app>
+</template>
+
+<script>
+  import { mapActions, mapState } from 'pinia'
+  import { useUserStore } from '@/stores/user'
+  export default {
+    data: () => ({
+      drawer: false,
+      title: 'phebo log in',
+      items: [
+        {
+          icon: 'mdi-apps',
+          title: 'Welcome',
+          to: '/',
+        },
+        {
+          icon: 'mdi-chart-bubble',
+          title: 'Crear una oferta',
+          to: '/create',
+        },
+        {
+          icon: 'mdi-chart-bubble',
+          title: 'Users',
+          to: '/users',
+        },
+        {
+          icon: 'mdi-chart-bubble',
+          title: 'Ver solicitudes recibidas',
+          to: '/solicitudes_recibidas',
+        }, 
+        {
+          icon: 'mdi-chart-bubble',
+          title: 'Ver solicitudes enviadas',
+          to: '/ver_solicitudes',
+        }, 
+        {
+          icon: 'mdi-chart-bubble',
+          title: 'buscador',
+          to: '/buscador',
+        },
+        {
+          icon: 'mdi-chart-bubble',
+          title: 'Ver trabajos',
+          to: '/trabajos',
+        },
+      ],
+    }),
+    computed: {
+       ...mapState(useUserStore, ['logged']),
+    },
+    methods: {
+      ...mapActions(useUserStore, ['logout']),
+      async doLogout(){
+        await this.logout()
+        await this.$router.push('/')
+      }
+    }
+  }
+</script>
